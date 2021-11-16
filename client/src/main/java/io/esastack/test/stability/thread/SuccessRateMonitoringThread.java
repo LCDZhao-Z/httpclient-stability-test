@@ -12,7 +12,8 @@ public class SuccessRateMonitoringThread<T> extends Thread {
     private final Supplier<T> task;
     private final Function<T, Boolean> judgeFunc;
     private final Function<T, String> failedMessageFunc;
-    private final long printPeriod;
+    private final long printPeriodMills;
+    private long lastPrintTime = System.currentTimeMillis();
     private long failedCount;
     private long count;
 
@@ -23,19 +24,19 @@ public class SuccessRateMonitoringThread<T> extends Thread {
         this.judgeFunc = judgeFunc;
         this.task = task;
         this.failedMessageFunc = failedMessageFunc;
-        this.printPeriod = 100000L;
-        this.setName("SuccessRateMonitoringThread-"+System.currentTimeMillis());
+        this.printPeriodMills = 10 * 60 * 1000;
+        this.setName("SuccessRateMonitoringThread-" + System.currentTimeMillis());
     }
 
     public SuccessRateMonitoringThread(
             Supplier<T> task,
             Function<T, Boolean> judgeFunc,
             Function<T, String> failedMessageFunc,
-            long printPeriod) {
+            long printPeriodMills) {
         this.judgeFunc = judgeFunc;
         this.task = task;
         this.failedMessageFunc = failedMessageFunc;
-        this.printPeriod = printPeriod;
+        this.printPeriodMills = printPeriodMills;
     }
 
     @Override
@@ -58,7 +59,7 @@ public class SuccessRateMonitoringThread<T> extends Thread {
                     logger.error("judge result error!result:{}", result, e);
                 }
 
-                if(isSuccess){
+                if (isSuccess) {
                     continue;
                 }
 
@@ -74,7 +75,9 @@ public class SuccessRateMonitoringThread<T> extends Thread {
                 logger.error("Error occur!", e);
             } finally {
                 count++;
-                if (count % printPeriod == 0) {
+                long current = System.currentTimeMillis();
+                if (current - lastPrintTime > printPeriodMills) {
+                    lastPrintTime = current;
                     logger.info("Count : " + count +
                             ", FailedCount : " + failedCount);
                 }

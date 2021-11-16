@@ -1,35 +1,31 @@
-package io.esastack.test.stability.http;
+package io.esastack.test.stability.command.rest;
 
 import esa.commons.Checks;
 import esa.commons.logging.Logger;
-import io.esastack.commons.net.buffer.Buffer;
 import io.esastack.commons.net.http.HttpVersion;
-import io.esastack.httpclient.core.Handler;
-import io.esastack.httpclient.core.HttpClient;
-import io.esastack.httpclient.core.HttpResponse;
-import io.esastack.httpclient.core.SegmentRequest;
 import io.esastack.httpclient.core.util.LoggerUtils;
+import io.esastack.restclient.RestClient;
+import io.esastack.restclient.RestResponseBase;
 import io.esastack.test.stability.command.AutoRegistryExecutor;
 import io.esastack.test.stability.command.Executor;
 import io.esastack.test.stability.thread.SuccessRateMonitoringThread;
 import io.esastack.test.stability.util.BodyUtil;
 import io.esastack.test.stability.util.Constants;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class HttpClientExecutor implements AutoRegistryExecutor {
+public class RestClientExecutor implements AutoRegistryExecutor {
 
     private static final Logger logger = LoggerUtils.logger();
 
-    public HttpClientExecutor() {
+    public RestClientExecutor() {
+
     }
 
     @Override
     public String type() {
-        return Constants.Type.HTTP;
+        return Constants.Type.REST;
     }
 
     @Override
@@ -53,22 +49,14 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
                 h2GetNoBody(url);
                 break;
 
-            case Constants.Command.H1_CHUNK:
-                h1Chunk(url);
-                break;
-
-            case Constants.Command.H2_CHUNK:
-                h2Chunk(url);
-                break;
-
             default:
                 throw new UnsupportedOperationException("This command(" + command + ") is not supported.");
         }
     }
 
-    private void h1Post1MB(String url) throws InterruptedException, ExecutionException, IOException {
+    private void h1Post1MB(String url) throws Exception {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
-        HttpClient client = HttpClient.create()
+        RestClient client = RestClient.create()
                 .connectTimeout(1000)
                 .readTimeout(3000)
                 .connectionPoolSize(2048)
@@ -78,9 +66,9 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         post1MB(client, url, HttpVersion.HTTP_1_1);
     }
 
-    private void h2Post1MB(String url) throws InterruptedException, ExecutionException, IOException {
+    private void h2Post1MB(String url) throws Exception {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
-        HttpClient client = HttpClient.create()
+        RestClient client = RestClient.create()
                 .connectTimeout(1000)
                 .readTimeout(3000)
                 .connectionPoolSize(2048)
@@ -90,9 +78,9 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         post1MB(client, url, HttpVersion.HTTP_2);
     }
 
-    private void h1GetNoBody(String url) throws IOException {
+    private void h1GetNoBody(String url) throws Exception {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
-        HttpClient client = HttpClient.create()
+        RestClient client = RestClient.create()
                 .connectTimeout(1000)
                 .readTimeout(3000)
                 .connectionPoolSize(2048)
@@ -102,9 +90,9 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         getNoBody(client, url, HttpVersion.HTTP_1_1);
     }
 
-    private void h2GetNoBody(String url) throws IOException {
+    private void h2GetNoBody(String url) throws Exception {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
-        HttpClient client = HttpClient.create()
+        RestClient client = RestClient.create()
                 .connectTimeout(1000)
                 .readTimeout(3000)
                 .connectionPoolSize(2048)
@@ -114,66 +102,18 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         getNoBody(client, url, HttpVersion.HTTP_2);
     }
 
-    private void h1Chunk(String url) throws IOException {
-        System.setProperty("io.esastack.httpclient.ioThreads", "6");
-        HttpClient client = HttpClient.create()
-                .connectTimeout(1000)
-                .readTimeout(3000)
-                .connectionPoolSize(2048)
-                .connectionPoolWaitingQueueLength(16)
-                .version(HttpVersion.HTTP_1_1)
-                .build();
-        chunk(client, url, HttpVersion.HTTP_1_1);
-    }
-
-    private void h2Chunk(String url) throws IOException {
-        System.setProperty("io.esastack.httpclient.ioThreads", "6");
-        HttpClient client = HttpClient.create()
-                .connectTimeout(1000)
-                .readTimeout(3000)
-                .connectionPoolSize(2048)
-                .connectionPoolWaitingQueueLength(16)
-                .version(HttpVersion.HTTP_2)
-                .build();
-        chunk(client, url, HttpVersion.HTTP_2);
-    }
-
-    private void chunk(HttpClient client, String url, HttpVersion version) throws IOException {
-        new SuccessRateMonitoringThread<>(
-                () -> {
-                    try {
-                        SegmentRequest request = client.post(url)
-                                .handler(new SimpleHandler())
-                                .segment();
-                        for (int j = 0; j < BodyUtil.K; j++) {
-                            request.write(BodyUtil.CHUNK_BODY[j]);
-                        }
-                        return request.end().get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        logger.error("Chunk request to url({}) error", url, e);
-                        return null;
-                    }
-                },
-                createJudgeFunc(200, version, BodyUtil.DON_T_JUDGE_BODY),
-                createFailedMessageFunc(),
-                50000
-        ).start();
-
-        logger.info("HttpClient 已启动1条线程，循环以1024次1KB的chunk请求体请求url：" + url);
-        System.in.read();
-    }
-
-    private void getNoBody(HttpClient client, String url, HttpVersion version)
-            throws IOException {
+    private void getNoBody(RestClient client, String url, HttpVersion version)
+            throws Exception {
         for (int i = 0; i < 10; i++) {
             new SuccessRateMonitoringThread<>(
                     () -> {
                         try {
                             return client.get(url)
                                     .execute()
+                                    .toCompletableFuture()
                                     .get();
                         } catch (InterruptedException | ExecutionException e) {
-                            logger.error("GetNoBody to url({}) error", url, e);
+                            logger.error("Error when getNoBody to url:{}", url, e);
                             return null;
                         }
                     },
@@ -182,36 +122,36 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
             ).start();
         }
 
-        logger.info("HttpClient 已启动10条线程，循环以0MB的请求体请求url：" + url);
+        logger.info("RestClient 已启动10条线程，循环以0MB的请求体请求url：" + url);
         System.in.read();
     }
 
-    private void post1MB(HttpClient client, String url, HttpVersion version)
-            throws IOException {
+    private void post1MB(RestClient client, String url, HttpVersion version) throws Exception {
+
         for (int i = 0; i < 10; i++) {
             new SuccessRateMonitoringThread<>(
                     () -> {
                         try {
                             return client.post(url)
-                                    .body(BodyUtil.EXPECTED_1MB_BODY)
+                                    .entity(BodyUtil.EXPECTED_1MB_BODY)
                                     .execute()
+                                    .toCompletableFuture()
                                     .get();
-                        } catch (InterruptedException | ExecutionException e) {
-                            logger.error("post1MB to url({}) error", url, e);
+                        } catch (Throwable e) {
+                            logger.error("Error when post1MB to url:{}", url, e);
                             return null;
                         }
                     },
                     createJudgeFunc(200, version, BodyUtil.EXPECTED_1MB_BYTE_LENGTH),
-                    createFailedMessageFunc(),
-                    10000
+                    createFailedMessageFunc()
             ).start();
         }
 
-        logger.info("HttpClient 已启动10条线程，循环以1MB的请求体请求url：" + url);
+        logger.info("RestClient 已启动10条线程，循环以1MB的请求体请求url：" + url);
         System.in.read();
     }
 
-    private Function<HttpResponse, Boolean> createJudgeFunc(int expectedStatus, HttpVersion expectedVersion, int expectedBodyLength) {
+    private Function<RestResponseBase, Boolean> createJudgeFunc(int expectedStatus, HttpVersion expectedVersion, int expectedBodyLength) {
         return (response) -> {
             if (response == null) {
                 logger.error("response is null!");
@@ -230,13 +170,9 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
                 return false;
             }
 
-            if (expectedBodyLength == BodyUtil.DON_T_JUDGE_BODY) {
-                return true;
-            }
-
             int bodyBytes;
             try {
-                bodyBytes = response.body().readableBytes();
+                bodyBytes = response.bodyToEntity(byte[].class).length;
             } catch (Exception e) {
                 logger.error("bodyToEntity error!", e);
                 return false;
@@ -250,49 +186,23 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         };
     }
 
-    private Function<HttpResponse, String> createFailedMessageFunc() {
+    private Function<RestResponseBase, String> createFailedMessageFunc() {
         return (response) -> {
             if (response == null) {
                 return "Response is null!";
             }
 
             try {
-                return "Response status:" + response.status() + ",Response body: " + response.body().string(StandardCharsets.UTF_8);
+                return "Response status:" + response.status() + ",Response body: " + response.bodyToEntity(String.class);
             } catch (Exception e) {
-                logger.error("Generate failedMessage error!", e);
-                return "Generate failedMessage error,cause: bodyToString error:" + e.getMessage();
+                logger.error("bodyToEntity error!", e);
+                return "Generate message failed,cause: bodyToString error:" + e.getMessage();
             }
         };
     }
 
-    private static final class SimpleHandler extends Handler {
-
-        private int count;
-
-        @Override
-        public void onData(Buffer content) {
-            if (content == null) {
-                return;
-            }
-            count += content.readableBytes();
-        }
-
-        @Override
-        public void onEnd() {
-            if (count != BodyUtil.EXPECTED_1MB_BYTE_LENGTH) {
-                logger.error("Unexpected body size: " + count);
-            }
-        }
-
-        @Override
-        public void onError(Throwable cause) {
-            cause.printStackTrace();
-        }
-
-    }
-
     @Override
     public Executor singleton() {
-        return new HttpClientExecutor();
+        return new RestClientExecutor();
     }
 }
