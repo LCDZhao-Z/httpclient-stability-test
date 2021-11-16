@@ -22,12 +22,12 @@ class ExecutorManagerImpl implements ExecutorManager {
     }
 
     @Override
-    public void execute(String type, String command) {
+    public Executor get(String type) {
         Executor executor = executorMap.get(type);
         if (executor == null) {
             throw new NullPointerException("The type(" + type + ") of executor is null!");
         }
-        executor.execute(command);
+        return executor;
     }
 
     @Override

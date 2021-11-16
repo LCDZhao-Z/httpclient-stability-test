@@ -2,7 +2,7 @@ package io.esastack.test.stability.command;
 
 public interface ExecutorManager {
 
-    void execute(String type, String command);
+    Executor get(String type);
 
     void registry(Executor executor);
 

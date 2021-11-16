@@ -4,7 +4,7 @@ public interface Executor {
 
     String type();
 
-    void execute(String command);
+    void execute(String command, String url);
 
     Executor singleton();
 
