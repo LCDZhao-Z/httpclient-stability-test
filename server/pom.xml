@@ -241,7 +241,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>io.esastack.RestLightApplication</mainClass>
+                            <mainClass>io.io.esastack.RestLightApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
