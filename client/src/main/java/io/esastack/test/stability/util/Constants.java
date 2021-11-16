@@ -12,7 +12,12 @@ public final class Constants {
     }
 
     public static final class Command {
-
+        public static final String H1_POST_1MB = "H1_POST_1MB";
+        public static final String H2_POST_1MB = "H2_POST_1MB";
+        public static final String H1_GET_NO_BODY = "H1_GET_NO_BODY";
+        public static final String H2_GET_NO_BODY = "H2_GET_NO_BODY";
+        public static final String H1_CHUNK = "H1_CHUNK";
+        public static final String H2_CHUNK = "H2_CHUNK";
     }
 
 }

@@ -11,5 +11,22 @@
 
     <artifactId>client</artifactId>
 
+    <properties>
+        <esa-client.version>0.1.1-SNAPSHOT</esa-client.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.esastack</groupId>
+            <artifactId>httpclient-core</artifactId>
+            <version>${esa-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.esastack</groupId>
+            <artifactId>restclient</artifactId>
+            <version>${esa-client.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
