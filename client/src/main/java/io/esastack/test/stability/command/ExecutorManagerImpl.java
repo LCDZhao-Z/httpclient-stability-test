@@ -6,19 +6,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-class ExecutorManagerImpl implements ExecutorManager {
+public class ExecutorManagerImpl implements ExecutorManager {
     private static final Map<String, Executor> executorMap =
             new HashMap<>();
 
-    ExecutorManagerImpl() throws Exception {
-        List<Class<AutoRegistryExecutor>> classes
-                = getAllClass(AutoRegistryExecutor.class, AutoRegistryExecutor.SCAN_PACKAGE_NAME);
-        for (Class<AutoRegistryExecutor> aClass : classes) {
-            registry((Executor) aClass.getConstructors()[0].newInstance());
-        }
+    public ExecutorManagerImpl() throws Exception {
     }
 
     @Override

@@ -6,7 +6,6 @@ import io.esastack.commons.net.http.HttpVersion;
 import io.esastack.httpclient.core.util.LoggerUtils;
 import io.esastack.restclient.RestClient;
 import io.esastack.restclient.RestResponseBase;
-import io.esastack.test.stability.command.AutoRegistryExecutor;
 import io.esastack.test.stability.command.Executor;
 import io.esastack.test.stability.thread.SuccessRateMonitoringThread;
 import io.esastack.test.stability.util.BodyUtil;
@@ -15,7 +14,7 @@ import io.esastack.test.stability.util.Constants;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class RestClientExecutor implements AutoRegistryExecutor {
+public class RestClientExecutor implements Executor {
 
     private static final Logger logger = LoggerUtils.logger();
 

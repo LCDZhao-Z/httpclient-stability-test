@@ -9,7 +9,6 @@ import io.esastack.httpclient.core.HttpClient;
 import io.esastack.httpclient.core.HttpResponse;
 import io.esastack.httpclient.core.SegmentRequest;
 import io.esastack.httpclient.core.util.LoggerUtils;
-import io.esastack.test.stability.command.AutoRegistryExecutor;
 import io.esastack.test.stability.command.Executor;
 import io.esastack.test.stability.thread.SuccessRateMonitoringThread;
 import io.esastack.test.stability.util.BodyUtil;
@@ -20,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-public class HttpClientExecutor implements AutoRegistryExecutor {
+public class HttpClientExecutor implements Executor {
 
     private static final Logger logger = LoggerUtils.logger();
 
