@@ -66,7 +66,7 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         }
     }
 
-    private void h1Post1MB(String url) throws InterruptedException, ExecutionException, IOException {
+    private void h1Post1MB(String url) throws IOException {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
         HttpClient client = HttpClient.create()
                 .connectTimeout(1000)
@@ -78,7 +78,7 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
         post1MB(client, url, HttpVersion.HTTP_1_1);
     }
 
-    private void h2Post1MB(String url) throws InterruptedException, ExecutionException, IOException {
+    private void h2Post1MB(String url) throws IOException {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
         HttpClient client = HttpClient.create()
                 .connectTimeout(1000)
@@ -139,26 +139,27 @@ public class HttpClientExecutor implements AutoRegistryExecutor {
     }
 
     private void chunk(HttpClient client, String url, HttpVersion version) throws IOException {
-        new SuccessRateMonitoringThread<>(
-                () -> {
-                    try {
-                        SegmentRequest request = client.post(url)
-                                .handler(new SimpleHandler())
-                                .segment();
-                        for (int j = 0; j < BodyUtil.K; j++) {
-                            request.write(BodyUtil.CHUNK_BODY[j]);
+        for (int i = 0; i < 10; i++) {
+            new SuccessRateMonitoringThread<>(
+                    () -> {
+                        try {
+                            SegmentRequest request = client.post(url)
+                                    .handler(new SimpleHandler())
+                                    .segment();
+                            for (int j = 0; j < BodyUtil.K; j++) {
+                                request.write(BodyUtil.CHUNK_BODY[j]);
+                            }
+                            return request.end().get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            logger.error("Chunk request to url({}) error", url, e);
+                            return null;
                         }
-                        return request.end().get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        logger.error("Chunk request to url({}) error", url, e);
-                        return null;
-                    }
-                },
-                createJudgeFunc(200, version, BodyUtil.DON_T_JUDGE_BODY),
-                createFailedMessageFunc()
-        ).start();
-
-        logger.info("HttpClient 已启动1条线程，循环以1024次1KB的chunk请求体请求url：" + url);
+                    },
+                    createJudgeFunc(200, version, BodyUtil.DON_T_JUDGE_BODY),
+                    createFailedMessageFunc()
+            ).start();
+        }
+        logger.info("HttpClient 已启动10条线程，循环以1024次1KB的chunk请求体请求url：" + url);
         System.in.read();
     }
 
