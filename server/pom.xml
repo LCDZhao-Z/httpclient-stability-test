@@ -3,10 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <artifactId>httpclient-stability-test</artifactId>
+        <groupId>esa</groupId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,12 +17,19 @@
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>nexus-plugin</id>
-            <url>http://nexus.os.adc.com/nexus/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>nexus-release</id>
+            <url>http://nexus.os.adc.com/nexus/content/repositories/releases/
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <url>
+                http://nexus.os.adc.com/nexus/content/repositories/snapshots/
+            </url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <java.version>1.8</java.version>
@@ -31,6 +37,7 @@
         <netty.version>4.1.48.Final</netty.version>
         <cabin.version>1.0.3-SNAPSHOT</cabin.version>
         <jackson.version>2.9.10</jackson.version>
+        <spring-boot.version>2.1.2.RELEASE</spring-boot.version>
     </properties>
 
     <dependencies>
@@ -43,11 +50,13 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
@@ -60,6 +69,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
@@ -109,7 +119,7 @@
 
     <build>
         <!--打包出来的文件名-->
-        <finalName>restlight-demo-dev</finalName>
+        <finalName>server-dev</finalName>
         <!--源代码-->
         <sourceDirectory>src/main/java</sourceDirectory>
         <!--资源文件-->
@@ -135,11 +145,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <!--打jar包时排除的文件-->
-                    <excludes>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.xml</exclude>
-                    </excludes>
                     <archive>
                         <!--生成的jar包中包含pom.xml和pom.properties这两个文件-->
                         <addMavenDescriptor>true</addMavenDescriptor>
@@ -237,13 +242,6 @@
                     <descriptors>
                         <descriptor>src/main/assembly/assembly.xml</descriptor>
                     </descriptors>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>io.io.esastack.RestLightApplication</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
                 <executions>
                     <execution>
@@ -257,5 +255,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
