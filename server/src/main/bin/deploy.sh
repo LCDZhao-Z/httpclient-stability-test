@@ -26,7 +26,7 @@ fi
 
 if [ -d "${appName}" ]; then
     echo "启动程序"
-    sh ${appName}/bin/start.sh $1
+    sh ${appName}/bin/start.sh $1 $2
     rm -rf ${appZip}
 else
     echo "发布包不存在，程序退出"

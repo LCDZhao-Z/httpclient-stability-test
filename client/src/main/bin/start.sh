@@ -14,7 +14,7 @@ case "`uname`" in
 esac
 base=${bin_abs_path}/..
 
-appName=client
+appName=$1
 
 get_pid() {
         STR=$1
@@ -38,9 +38,9 @@ JAVA_OPTS="-Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.awt.headless=t
 JAVA_OPTS_MEM="-server -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -XX:PermSize=128m -XX:MaxPermSize=196m "
 JAVA_OPTS_CMS="-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly"
 JAVA_OPTS_GC="-XX:+PrintTenuringDistribution -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:logs/gc-${appName}.log"
-TYPE=$1
-COMMAND=$2
-URL=$3
+TYPE=$2
+COMMAND=$3
+URL=$4
 
 cd $base
 if [ ! -d "logs" ]; then
