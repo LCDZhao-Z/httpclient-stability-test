@@ -25,8 +25,7 @@ if [ -f ${appZip} ]; then
 fi
 
 if [ -d "${appName}" ]; then
-    echo "重启程序"
-    sh ${appName}/bin/shutdown.sh
+    echo "启动程序"
     sh ${appName}/bin/start.sh $1
     rm -rf ${appZip}
 else
