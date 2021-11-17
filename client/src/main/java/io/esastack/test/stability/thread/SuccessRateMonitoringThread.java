@@ -12,6 +12,8 @@ public class SuccessRateMonitoringThread<T> extends Thread {
     private final Supplier<T> task;
     private final Function<T, Boolean> judgeFunc;
     private final Function<T, String> failedMessageFunc;
+    private static final long printCountPoint = 1000;
+    private long countForPrint = 0;
     private final long printPeriodMills;
     private long lastPrintTime = System.currentTimeMillis();
     private long failedCount;
@@ -74,12 +76,16 @@ public class SuccessRateMonitoringThread<T> extends Thread {
             } catch (Throwable e) {
                 logger.error("Error occur!", e);
             } finally {
+                countForPrint++;
                 count++;
-                long current = System.currentTimeMillis();
-                if (current - lastPrintTime > printPeriodMills) {
-                    lastPrintTime = current;
-                    logger.info("Count : " + count +
-                            ", FailedCount : " + failedCount);
+                if (countForPrint == printCountPoint) {
+                    countForPrint = 0;
+                    long current = System.currentTimeMillis();
+                    if (current - lastPrintTime > printPeriodMills) {
+                        lastPrintTime = current;
+                        logger.info("Count : " + count +
+                                ", FailedCount : " + failedCount);
+                    }
                 }
             }
         }
