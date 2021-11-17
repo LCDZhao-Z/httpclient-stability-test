@@ -27,7 +27,7 @@ fi
 if [ -d "${appName}" ]; then
     echo "重启程序"
     sh ${appName}/bin/shutdown.sh
-    sh ${appName}/bin/start.sh
+    sh ${appName}/bin/start.sh $1
     rm -rf ${appZip}
 else
     echo "发布包不存在，程序退出"

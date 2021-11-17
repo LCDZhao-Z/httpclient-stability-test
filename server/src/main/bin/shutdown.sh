@@ -14,7 +14,7 @@ get_pid() {
 
 base=`dirname $0`/..
 
-appName=http-protocol
+appName=server
 
 pidfile=$base/server.pid
 

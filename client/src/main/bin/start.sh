@@ -33,22 +33,20 @@ if [ ! "$pid" = "" ]; then
 	exit -1;
 fi
 
-if [ "$1" = "debug" ]; then
-	DEBUG_PORT=$2
-	DEBUG_SUSPEND="n"
-	JAVA_DEBUG_OPT="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
-fi
 
 JAVA_OPTS="-Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"
 JAVA_OPTS_MEM="-server -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -XX:PermSize=128m -XX:MaxPermSize=196m "
 JAVA_OPTS_CMS="-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly"
 JAVA_OPTS_GC="-XX:+PrintTenuringDistribution -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:logs/gc-${appName}.log"
+TYPE=$1
+COMMAND=$2
+URL=$3
 
 cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
 fi
-java $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC $JAVA_DEBUG_OPT -classpath 'lib/*:conf' io.esastack.ClientApplication 1>>logs/server.log 2>&1 &
+java $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.ClientApplication $TYPE $COMMAND $URL 1>>logs/server.log 2>&1 &
 
 echo $! > $base/server.pid
 

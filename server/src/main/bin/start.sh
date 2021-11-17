@@ -37,15 +37,13 @@ JAVA_OPTS="-Djava.io.tmpdir=$base/tmp -DappName=${appName} -Djava.awt.headless=t
 JAVA_OPTS_MEM="-server -Xms1024m -Xmx1024m -XX:NewSize=512m -XX:MaxNewSize=512m -XX:PermSize=128m -XX:MaxPermSize=196m "
 JAVA_OPTS_CMS="-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly"
 JAVA_OPTS_GC="-XX:+PrintTenuringDistribution -XX:+PrintGCDateStamps -XX:+PrintGCDetails -Xloggc:logs/gc-${appName}.log"
-TYPE=$1
-COMMAND=$2
-URL=$3
+PORT=$1
 
 cd $base
 if [ ! -d "logs" ]; then
   mkdir logs
 fi
-java $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.RestLightApplication $TYPE $COMMAND $URL 1>>logs/server.log 2>&1 &
+java $JAVA_OPTS $JAVA_OPTS_MEM $JAVA_OPTS_CMS $JAVA_OPTS_GC -classpath 'lib/*:conf' io.esastack.RestLightApplication $PORT 1>>logs/server.log 2>&1 &
 
 echo $! > $base/server.pid
 
