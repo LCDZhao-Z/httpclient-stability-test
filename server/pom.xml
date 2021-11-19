@@ -3,8 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <groupId>io.esastack</groupId>
         <artifactId>httpclient-stability-test</artifactId>
-        <groupId>esa</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -17,26 +17,9 @@
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>nexus-release</id>
-            <url>http://nexus.os.adc.com/nexus/content/repositories/releases/
-            </url>
-        </repository>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>
-                http://nexus.os.adc.com/nexus/content/repositories/snapshots/
-            </url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <properties>
         <java.version>1.8</java.version>
         <restlight.version>0.1.1</restlight.version>
-        <netty.version>4.1.48.Final</netty.version>
-        <cabin.version>1.0.3-SNAPSHOT</cabin.version>
-        <jackson.version>2.9.10</jackson.version>
         <spring-boot.version>2.1.2.RELEASE</spring-boot.version>
     </properties>
 
@@ -44,38 +27,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
             <version>${spring-boot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <version>${spring-boot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.70</version>
         </dependency>
 
         <!--Restlight starter-->
@@ -84,38 +36,7 @@
             <artifactId>restlight-starter</artifactId>
             <version>${restlight.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>io.esastack</groupId>
-            <artifactId>restlight-ext-multipart-starter</artifactId>
-            <version>${restlight.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>esa</groupId>
-            <artifactId>cabin-maven-common</artifactId>
-            <version>${cabin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>esa</groupId>
-            <artifactId>cabin-archive</artifactId>
-            <version>${cabin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>esa</groupId>
-            <artifactId>commons</artifactId>
-            <version>1.1.0</version>
-        </dependency>
     </dependencies>
-
 
     <build>
         <!--打包出来的文件名-->

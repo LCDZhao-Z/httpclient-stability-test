@@ -288,9 +288,4 @@ public class HttpClientExecutor implements Executor {
         }
 
     }
-
-    @Override
-    public Executor singleton() {
-        return new HttpClientExecutor();
-    }
 }

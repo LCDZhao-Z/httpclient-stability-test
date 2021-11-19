@@ -199,9 +199,4 @@ public class RestClientExecutor implements Executor {
             }
         };
     }
-
-    @Override
-    public Executor singleton() {
-        return new RestClientExecutor();
-    }
 }
