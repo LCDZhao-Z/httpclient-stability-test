@@ -23,19 +23,19 @@
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/src/main/lib</directory>
-            <outputDirectory>/lib</outputDirectory>
+            <outputDirectory>${file.separator}lib</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/bin</directory>
-            <outputDirectory>/bin</outputDirectory>
+            <outputDirectory>${file.separator}bin</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/resources</directory>
-            <outputDirectory>/conf</outputDirectory>
+            <outputDirectory>${file.separator}conf</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/target</directory>
-            <outputDirectory>/lib</outputDirectory>
+            <outputDirectory>${file.separator}lib</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

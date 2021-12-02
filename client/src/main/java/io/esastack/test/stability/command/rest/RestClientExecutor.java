@@ -93,10 +93,11 @@ public class RestClientExecutor implements Executor {
         System.setProperty("io.esastack.httpclient.ioThreads", "6");
         RestClient client = RestClient.create()
                 .connectTimeout(1000)
-                .readTimeout(3000)
+                .readTimeout(3000L)
                 .connectionPoolSize(2048)
                 .connectionPoolWaitingQueueLength(16)
                 .version(HttpVersion.HTTP_2)
+                .useExpectContinue(true)
                 .build();
         getNoBody(client, url, HttpVersion.HTTP_2);
     }
@@ -108,6 +109,7 @@ public class RestClientExecutor implements Executor {
                     () -> {
                         try {
                             return client.get(url)
+                                    .disableExpectContinue()
                                     .execute()
                                     .toCompletableFuture()
                                     .get();

@@ -27,6 +27,17 @@
             <artifactId>restclient</artifactId>
             <version>${esa-client.version}</version>
         </dependency>
+
+<!--        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>2.1.2.RELEASE</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>2.1.2.RELEASE</version>
+        </dependency>
     </dependencies>
     <build>
         <!--打包出来的文件名-->
@@ -163,6 +174,7 @@
                         </goals>
                     </execution>
                 </executions>
+                <version>2.5.5</version>
             </plugin>
         </plugins>
     </build>
